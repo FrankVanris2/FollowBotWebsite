@@ -1,57 +1,189 @@
 # FollowBotWebsite
-This is the website that will contain reliable and useful information about our FollowBot
+A web application for managing and monitoring FollowBot devices. This platform allows users to register, authenticate, link FollowBot devices, and monitor their activity through real-time data visualization and analytics.
+
+## What is BotServer?
+
+BotServer is a full-stack web application that serves as the central hub for FollowBot management. It provides:
+
+- **User Management**: Registration, authentication, and session management
+- **Bot Linking**: Connect FollowBot devices to user accounts using functional keys
+- **Real-time Monitoring**: Track bot location, temperature, battery status, and activity logs
+- **Data Analytics**: Visualize bot performance and historical data
+- **API Integration**: RESTful endpoints for Arduino/IoT device communication (*To be changed*)
+
+The application uses Flask as the backend server with DynamoDB for data persistence, and React for the frontend interface.
 
 # Configuration & Usage
 
-## Front-end & Back-end
-Developing on the front-end requires to set up the server side. And it's quite easy.
+## Prerequisites
 
-Firstly, we run our server with Node.js. Follow instructions [here](https://nodejs.org/en/download) to install.
+- [Node.js](https://nodejs.org/en/download) (for frontend development)
+- Python 3.x (for Flask backend)
+- AWS CLI configured (for DynamoDB access)
 
-* In your command prompt go to the `BotServer` directory
-* Once in the directory you must run these pip commands:
-  ```cmd
-  pip install Flask
-  pip install -U flask-cors
-  ```
+## Backend Setup
 
-Our database is built using AWS DynamoDB. Install this package in order to access and interact with AWS services like DynamoDB and S3.
-```
-pip install boto3 
-```
-For more information about database interactions between our website and Arduino clients, go to [DatabaseDocument](./Documentation/DatabaseDocument.md):
+Navigate to the `BotServer` directory and install Python dependencies:
 
-* install these npm packages for front-end development:
-```
-pip install flask-login  # manage user sessions and authentication in Flask apps
-npm install react-leaflet@4 leaflet  # build mapping interfaces
-npm install chart.js react-chartjs-2 # interactive data visualizations
-```
-
-
-* Once those packages are installed alongside npm, you will need to do the next following commands:
 ```cmd
-npm i
-npm i -g npm
+cd BotServer
+pip install Flask
+pip install -U flask-cors
+pip install boto3
+pip install flask-login
+pip install werkzeug
+pip install botocore
 ```
-* Now after these above steps you are ready to build the front-end and back-end
+
+## Frontend Setup
+
+Install Node.js dependencies for React development:
+
 ```cmd
-npm run build
+npm install
+npm install react-leaflet@4 leaflet
+npm install chart.js react-chartjs-2
+npm install -g npm
 ```
-* After the build, run the server
+
+## Database Configuration
+
+Our application uses AWS DynamoDB. Ensure you have:
+
+1. AWS credentials configured
+2. DynamoDB tables created (Users and FollowBots)
+3. Local DynamoDB for development (optional)
+
+For detailed database setup and API documentation, see [DatabaseDocument](./Documentation/DatabaseDocument.md).
+
+## Building and Running
+
+1. **Build the application:**
+   ```cmd
+   npm run build
+   ```
+
+2. **Start the server:**
+   ```cmd
+   npm run start
+   ```
+
+3. **Development mode (auto-reload):**
+   ```cmd
+   npm run watch
+   ```
+
+4. **Access the application:**
+   - Open your browser to `http://localhost:5000`
+   - The exact URL will be displayed in the server command window
+
+## Testing
+
+### Browser Testing
+Run end-to-end browser tests:
 ```cmd
-npm run start
+npm run test:browser
 ```
 
-* Run this to render changes to the server for testing
+### Unit Testing
+Run Jest unit tests:
 ```cmd
-npm run watch
+npm test
 ```
 
-* In your browser be sure to use this url: `http://xx.xx.xx.xx:5000`
-* the xx.xx.xx.xx is showed in the server command window.
+## Development Guidelines
 
-## Other Documents
-This will contain necessary documents that are needed for the website side of development. We have established the setup needed for the website, but we also include Documents aroun unit testing:
+### MANDATORY: Unit Testing Before Implementation
 
-* [Jest Unit Testing](https://github.com/FrankVanris2/FollowBotWebsite/blob/main/Documentation/JestUnitTesting.md)
+**Every developer MUST implement comprehensive unit tests before adding any new feature to the codebase.**
+
+#### Testing Requirements:
+
+1. **Write Tests First**: Follow Test-Driven Development (TDD) principles
+   - Write failing tests that describe the expected behavior
+   - Implement the minimum code to make tests pass
+   - Refactor while keeping tests green
+
+2. **Test Coverage Requirements**:
+   - All new functions/methods must have corresponding unit tests
+   - Minimum 80% code coverage for new features
+   - Test both success and failure scenarios
+   - Mock external dependencies (database calls, API requests)
+
+3. **Testing Standards**:
+   - Use Jest for JavaScript/React components
+   - Use Python's unittest for backend testing
+   - Follow naming convention: `test_[function_name]_[scenario]`
+   - Include setup and teardown for test isolation
+
+4. **Before Pull Request**:
+   ```cmd
+   # Run all tests to ensure nothing is broken
+   npm test
+   npm run test:browser
+   
+   # Verify build still works
+   npm run build
+   ```
+
+5. **Test Documentation**:
+   - Document test scenarios in commit messages
+   - Update test documentation when adding new test patterns
+   - Reference [Jest Unit Testing Guide](./Documentation/JestUnitTesting.md)
+
+#### Example Test Structure:
+```javascript
+// For React components
+describe('UserLogin Component', () => {
+  test('should render login form correctly', () => {
+    // Test implementation
+  });
+  
+  test('should handle invalid credentials gracefully', () => {
+    // Test implementation
+  });
+});
+
+// For API endpoints
+describe('POST /api/login', () => {
+  test('should authenticate valid user', () => {
+    // Test implementation
+  });
+  
+  test('should reject invalid credentials', () => {
+    // Test implementation
+  });
+});
+```
+
+**No feature will be merged without corresponding unit tests. This ensures code reliability and maintainability.**
+
+## API Endpoints
+
+Key endpoints include:
+- `POST /api/signup` - User registration
+- `POST /api/login` - User authentication
+- `POST /api/linkBot` - Link FollowBot to user account
+- `GET /api/getUserBots` - Retrieve user's linked bots
+- `GET /api/getBotLogs` - Get bot activity logs
+- `POST /api/postBotLogs` - Receive data from FollowBot devices
+
+## Documentation
+
+- [Database Schema & API Reference](./Documentation/DatabaseDocument.md)
+- [Jest Unit Testing Guide](./Documentation/JestUnitTesting.md)
+
+## Project Structure
+
+```
+BotServer/
+├── server/               # Flask backend
+│   ├── db_server/       # Database models
+│   ├── server.py        # Main Flask application
+│   └── sessionUser.py   # User session management
+├── src/                 # React frontend
+│   ├── pages/          # React components
+│   └── ...
+├── dist/               # Built frontend assets
+└── package.json        # Node.js
+```
