@@ -50,3 +50,8 @@ npm run watch
 
 * In your browser be sure to use this url: `http://xx.xx.xx.xx:5000`
 * the xx.xx.xx.xx is showed in the server command window.
+
+## Other Documents
+This will contain necessary documents that are needed for the website side of development. We have established the setup needed for the website, but we also include Documents aroun unit testing:
+
+* [Jest Unit Testing](https://github.com/FrankVanris2/FollowBotWebsite/blob/main/Documentation/JestUnitTesting.md)
